@@ -10,8 +10,15 @@ function highlightWords(string $text, array $words): string {
     }, $lowercaseWords);
     $pattern = '/\b(' . implode('|', $escapedWords) . ')\b/iu';
 
-    return preg_replace_callback($pattern, function($match) {
-        return "[{$match[1]}]";
+    $replacedWords = [];
+
+    return preg_replace_callback($pattern, function($match) use (&$replacedWords) {
+        $word = $match[1];
+        if (!in_array($word, $replacedWords)) {
+            $replacedWords[] = $word;
+            return "[{$word}]";
+        }
+        return $word;
     }, $lowercaseText);
 }
 
