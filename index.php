@@ -1,14 +1,11 @@
 <?php
 
 function highlightWords(string $text, array $words): string {
-    $lowercaseText = mb_strtolower($text, 'UTF-8');
-    $lowercaseWords = array_map(function($word) {
-        return mb_strtolower($word, 'UTF-8');
-    }, $words);
     $escapedWords = array_map(function($word) {
         return preg_quote($word, '/');
-    }, $lowercaseWords);
-    $pattern = '/\b(' . implode('|', $escapedWords) . ')\b/iu';
+    }, $words);
+
+    $pattern = '/\b(' . implode('|', $escapedWords) . ')\b/u';
 
     $replacedWords = [];
 
@@ -19,10 +16,9 @@ function highlightWords(string $text, array $words): string {
             return "[{$word}]";
         }
         return $word;
-    }, $lowercaseText);
+    }, $text);
 }
 
-// тест
 $text = "Мама мыла раму ама test";
 $words = ["test", "ама", "раму"];
 echo highlightWords($text, $words);
