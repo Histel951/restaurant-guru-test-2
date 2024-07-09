@@ -5,20 +5,21 @@ function highlightWords(string $text, array $words): string {
         return preg_quote($word, '/');
     }, $words);
 
-    $pattern = '/\b(' . implode('|', $escapedWords) . ')\b/u';
+    $pattern = '/\b(' . implode('|', $escapedWords) . ')\b/ui';
 
     $replacedWords = [];
 
     return preg_replace_callback($pattern, function($match) use (&$replacedWords) {
-        $word = $match[1];
-        if (!in_array($word, $replacedWords)) {
-            $replacedWords[] = $word;
+        $word = $match[0];
+        $lowerWord = mb_strtolower($word);
+        if (!isset($replacedWords[$lowerWord])) {
+            $replacedWords[$lowerWord] = true;
             return "[{$word}]";
         }
         return $word;
     }, $text);
 }
 
-$text = "Мама мыла раму ама test";
-$words = ["test", "ама", "раму"];
+$text = "Мама мыла раму Ама аМа test tEst teSt";
+$words = ["tEst", "аМа", "раму"];
 echo highlightWords($text, $words);
